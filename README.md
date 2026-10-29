@@ -6,9 +6,9 @@ A Halloween-themed investigation of three fictional incidents. Select a case and
 
 ## Run locally
 
-Requires Node.js 20 or newer. Run `npm start` and open http://127.0.0.1:43123. With `ENABLE_BASETEN` unset or `0`, responses are fixed non-AI demo results. No real logs are accepted or repairs executed.
+Requires Node.js 20 or newer. Run `npm start` and open http://127.0.0.1:43123. This public release always returns fixed non-AI demo results, even if inference settings are present. No real logs are accepted or repairs executed.
 
-An earlier local test produced a single Gemma / Modal analysis; one case does not establish general model quality. Live inference needs separately configured server-side credentials and an explicitly approved endpoint. Do not commit secrets. The in-process throttle is not a distributed rate limit or budget cap. Do not enable public inference without shared abuse and spending controls.
+An earlier local test produced a single Gemma / Modal analysis; one case does not establish general model quality. Live inference requires a separately reviewed code change, server-side credentials and an explicitly approved endpoint. Do not commit secrets. The in-process throttle is not a distributed rate limit or budget cap. Do not enable public inference without shared abuse and spending controls.
 
 ## License and dependencies
 

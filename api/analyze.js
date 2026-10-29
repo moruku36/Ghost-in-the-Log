@@ -1,6 +1,8 @@
 import { scenarios } from '../scenarios.js';
 let inFlight = false;
 let lastStart = 0;
+// Public demo is deliberately fail-closed, even if inference credentials exist.
+const PUBLIC_DEMO_ONLY = true;
 
 // The server operator must configure an exact approved origin; never trust request input.
 export function modalEndpointFor(model, origin) {
@@ -33,7 +35,7 @@ export default async function handler(req, res) {
   const scenario = scenarios[body.scenario_id];
   const provider = process.env.AI_PROVIDER || 'baseten';
   if (!['baseten','modal'].includes(provider)) return fail(503,'Invalid provider configuration.','プロバイダー設定が無効です。');
-  if (process.env.ENABLE_BASETEN !== '1') return res.status(200).json({mode:'demo', locale, result:locale === 'ja' ? scenario.demo : scenario.demoEn});
+  if (PUBLIC_DEMO_ONLY || process.env.ENABLE_BASETEN !== '1') return res.status(200).json({mode:'demo', locale, result:locale === 'ja' ? scenario.demo : scenario.demoEn});
   const key = provider === 'baseten' ? process.env.BASETEN_API_KEY : process.env.MODAL_PROXY_TOKEN;
   if (!key) return fail(503,'Provider credentials are not configured.','選択したプロバイダーの認証が設定されていません。');
   const model = (provider === 'baseten' ? process.env.BASETEN_MODEL : process.env.MODAL_MODEL)?.trim();
