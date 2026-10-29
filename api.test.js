@@ -1,0 +1,5 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import handler,{parseModelJson,modalEndpointFor} from './api/analyze.js';
+test('demo and request boundary',async()=>{delete process.env.ENABLE_BASETEN;let data,code=200;const res={setHeader(){},status(n){code=n;return this},json(v){data=v;return this}};await handler({method:'POST',body:{scenario_id:'connections',locale:'en'}},res);assert.equal(data.mode,'demo');await handler({method:'POST',body:{scenario_id:'connections',locale:'en',prompt:'x'}},res);assert.equal(code,400)});
+test('structured response and endpoint boundary',()=>{assert.deepEqual(parseModelJson('```json\n{\"a\":1}\n```'),{a:1});assert.throws(()=>parseModelJson('prose {\"a\":1}'));process.env.MODAL_ALLOWED_ORIGIN='https://example.modal.direct';try{assert.equal(modalEndpointFor('model',process.env.MODAL_ALLOWED_ORIGIN),'https://example.modal.direct/v1/chat/completions');assert.throws(()=>modalEndpointFor('model','https://evil.modal.direct'))}finally{delete process.env.MODAL_ALLOWED_ORIGIN}});
