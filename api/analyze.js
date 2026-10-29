@@ -1,6 +1,6 @@
 import { scenarios } from '../scenarios.js';
-let inFlight = false;
-let lastStart = 0;
+import { makeAdmission } from '../lib/admission.js';
+import { randomUUID } from 'node:crypto';
 // Public demo is deliberately fail-closed, even if inference credentials exist.
 const PUBLIC_DEMO_ONLY = true;
 
@@ -46,9 +46,13 @@ export default async function handler(req, res) {
       endpoint = modalEndpointFor(model, process.env.MODAL_ENDPOINT);
     } catch { return fail(503,'Check the Modal endpoint configuration.','Modal エンドポイント設定を確認してください。'); }
   }
-  // Best effort per process only; this is not a distributed budget or rate limit.
-  if (inFlight || Date.now() - lastStart < 10000) return fail(429,'Please wait before trying again.','調査が混み合っています。少し待ってからお試しください。');
-  inFlight = true; lastStart = Date.now();
+  // The public demo gate above remains hard-coded. If inference is enabled in a
+  // future reviewed release, reserve globally before contacting the provider.
+  let admission;
+  try { admission = await makeAdmission(process.env.DATABASE_URL); }
+  catch { return fail(503,'Shared guard unavailable.','共有制限を利用できません。'); }
+  const requestId = randomUUID();
+  if (!await admission.reserve(requestId)) return fail(503,'The AI demo is unavailable or its limit was reached.','AI デモは利用できないか、上限に達しました。');
   let stage = 'network';
   try {
     const response = await fetch(endpoint, {
@@ -70,6 +74,7 @@ export default async function handler(req, res) {
     if (!validResult(result, Number.MAX_SAFE_INTEGER)) throw new Error('invalid schema');
     stage = 'evidence';
     if (!validResult(result, scenario.logs.length)) throw new Error('invalid evidence');
+    if (!await admission.complete(requestId)) return fail(503,'The request could not be reconciled.','処理の完了を確認できませんでした。');
     return res.status(200).json({mode:'ai', provider, locale, result});
   } catch {
     const messages = {
@@ -82,5 +87,4 @@ export default async function handler(req, res) {
     };
     return fail(502,...messages[stage]);
   }
-  finally { inFlight = false; }
 }
