@@ -1,1 +1,1 @@
-{"rewrites":[{"source":"/","destination":"/public/index.html"},{"source":"/style.css","destination":"/public/style.css"},{"source":"/app.js","destination":"/public/app.js"},{"source":"/room.svg","destination":"/public/room.svg"}]}
+{"buildCommand":"npm run build","rewrites":[{"source":"/","destination":"/public/index.html"},{"source":"/style.css","destination":"/public/style.css"},{"source":"/app.js","destination":"/public/app.js"},{"source":"/room.svg","destination":"/public/room.svg"}]}
