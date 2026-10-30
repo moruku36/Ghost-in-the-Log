@@ -33,9 +33,9 @@ export default async function handler(req, res) {
   const locale = body.locale;
   const fail = (status, en, ja) => res.status(status).json({error:locale === 'ja' ? ja : en});
   const scenario = scenarios[body.scenario_id];
+  if (PUBLIC_DEMO_ONLY || process.env.ENABLE_BASETEN !== '1') return res.status(200).json({mode:'demo', locale, result:locale === 'ja' ? scenario.demo : scenario.demoEn});
   const provider = process.env.AI_PROVIDER || 'baseten';
   if (!['baseten','modal'].includes(provider)) return fail(503,'Invalid provider configuration.','プロバイダー設定が無効です。');
-  if (PUBLIC_DEMO_ONLY || process.env.ENABLE_BASETEN !== '1') return res.status(200).json({mode:'demo', locale, result:locale === 'ja' ? scenario.demo : scenario.demoEn});
   const key = provider === 'baseten' ? process.env.BASETEN_API_KEY : process.env.MODAL_PROXY_TOKEN;
   if (!key) return fail(503,'Provider credentials are not configured.','選択したプロバイダーの認証が設定されていません。');
   const model = (provider === 'baseten' ? process.env.BASETEN_MODEL : process.env.MODAL_MODEL)?.trim();
@@ -49,7 +49,7 @@ export default async function handler(req, res) {
   // The public demo gate above remains hard-coded. If inference is enabled in a
   // future reviewed release, reserve globally before contacting the provider.
   let admission;
-  try { admission = await makeAdmission(process.env.DATABASE_URL); }
+  try { admission = await makeAdmission(process.env.GHOST_GUARD_DATABASE_URL); }
   catch { return fail(503,'Shared guard unavailable.','共有制限を利用できません。'); }
   const requestId = randomUUID();
   if (!await admission.reserve(requestId)) return fail(503,'The AI demo is unavailable or its limit was reached.','AI デモは利用できないか、上限に達しました。');
