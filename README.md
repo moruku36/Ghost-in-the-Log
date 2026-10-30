@@ -1,8 +1,10 @@
 # Ghost in the Log
 
-[日本語](README.ja.md)
+**English** · [日本語](README.ja.md)
 
 A Halloween-themed investigation of three fictional incidents. Select a case and compare the numbered logs with a possible cause, evidence and unknowns. English is the default; Japanese is available in the interface.
+
+Built for the [DEV Hacktoberfest Open-Source AI Challenge](https://dev.to/challenges/hacktoberfest-week4-2026-10-26) — Week 4: "Ghost in the Machine". Submission post: [I Built "Ghost in the Log": A Halloween Log Investigation With a Live AI Behind It](https://dev.to/moruku36/i-built-ghost-in-the-log-a-halloween-log-investigation-with-a-live-ai-behind-it-1o44).
 
 ## Live demo
 Try [Ghost in the Log](https://ghost-in-the-log.vercel.app/) for limited live analysis of fixed fictional log cases. It uses Baseten Model APIs with the open-weight Muse Spark Open model; it does not accept real user logs or perform automated remediation. Results suggest a possible cause, numbered evidence, and unknowns. They are illustrative, not production incident diagnoses, and general diagnostic accuracy is not guaranteed. English is the default; a Japanese UI is available.
