@@ -1,8 +1,8 @@
 import { scenarios } from '../scenarios.js';
 import { makeAdmission } from '../lib/admission.js';
 import { randomUUID } from 'node:crypto';
-// Public demo is deliberately fail-closed, even if inference credentials exist.
-const PUBLIC_DEMO_ONLY = true;
+// Temporarily enabled for the approved, database-limited public trial.
+const PUBLIC_DEMO_ONLY = false;
 
 // The server operator must configure an exact approved origin; never trust request input.
 export function modalEndpointFor(model, origin) {
